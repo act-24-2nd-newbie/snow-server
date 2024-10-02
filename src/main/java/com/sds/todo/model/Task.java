@@ -18,7 +18,7 @@ import java.time.Instant;
 public class Task {
 
     @Id
-    @SequenceGenerator(name = "tasks_id_seq", allocationSize = 1)
+    @SequenceGenerator(name = "tasks_id_seq", sequenceName = "tasks_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tasks_id_seq")
     private Long id;
 
