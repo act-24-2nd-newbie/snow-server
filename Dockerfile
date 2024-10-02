@@ -1,7 +1,14 @@
-FROM bellsoft/liberica-runtime-container:jdk-17-musl as builder
+FROM bellsoft/liberica-runtime-container:jdk-17-musl as base
 WORKDIR /app
-COPY . .
-RUN chmod +x gradlew && ./gradlew build -x test
+COPY gradlew .
+COPY *.gradle .
+COPY gradle ./gradle
+RUN chmod +x gradlew && ./gradlew
+
+FROM base as builder
+WORKDIR /app
+COPY src src
+RUN ./gradlew build -x test
 
 FROM bellsoft/liberica-runtime-container:jre-17-slim-musl as runner
 WORKDIR /app
