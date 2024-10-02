@@ -18,8 +18,8 @@ import java.time.Instant;
 public class Task {
 
     @Id
-    @SequenceGenerator(name = "task_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "task_id_seq")
+    @SequenceGenerator(name = "tasks_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.IDENTITY, generator = "tasks_id_seq")
     private Long id;
 
     @Column(nullable = false)
