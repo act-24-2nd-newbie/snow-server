@@ -1,0 +1,12 @@
+spring:
+  datasource:
+    url: jdbc:h2:E:\\packages\\todo;AUTO_SERVER=TRUE
+    username: sa
+  h2:
+    console:
+      enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: update
+todo:
+  allowed-origins: http://localhost:5174

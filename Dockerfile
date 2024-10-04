@@ -1,16 +1,15 @@
-FROM bellsoft/liberica-runtime-container:jdk-17-musl as base
-WORKDIR /app
-COPY gradlew .
-COPY *.gradle .
-COPY gradle ./gradle
-RUN chmod +x gradlew && ./gradlew
+# 1. Build
+FROM bellsoft/liberica-openjdk-alpine:17 as builder
+WORKDIR /root/app
+COPY gradlew build.gradle settings.gradle ./
+COPY gradle gradle
+RUN chmod +x gradlew && ./gradlew --no-daemon
 
-FROM base as builder
-WORKDIR /app
 COPY src src
-RUN ./gradlew build -x test
+RUN ./gradlew build -x test --no-daemon
 
-FROM bellsoft/liberica-runtime-container:jre-17-slim-musl as runner
-WORKDIR /app
-COPY --from=builder /app/build/libs/*.jar app.jar
+# 2. Serve
+FROM bellsoft/liberica-openjre-alpine:17 as runner
+WORKDIR /root/app
+COPY --from=builder /root/app/build/libs/*.jar app.jar
 ENTRYPOINT ["java", "-jar", "-Dspring.profiles.active=prod", "app.jar"]
