@@ -44,6 +44,6 @@ public class TaskRepositoryTest {
         Assertions.assertEquals(1, result.size());
         Assertions.assertEquals("Contents", result.get(0).getContents());
         Assertions.assertEquals(false, result.get(0).getIsDone());
-        Assertions.assertNotNull(result.get(0).getCreatedAt());
+        Assertions.assertNotNull(result.get(0).getCreatedDate());
     }
 }
