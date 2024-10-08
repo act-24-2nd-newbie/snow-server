@@ -22,7 +22,12 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "tasks_id_seq")
     private Long id;
 
-    @Column(nullable = false)
+    @Setter
+    @ManyToOne
+    @JoinColumn(name="member_id")
+    private Member member;
+
+    @Column(nullable = false, length = 200)
     @Setter
     private String contents;
 
