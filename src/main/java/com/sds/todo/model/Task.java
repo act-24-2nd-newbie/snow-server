@@ -37,9 +37,9 @@ public class Task {
 
     @CreatedDate
     @Column(nullable = false, updatable = false)
-    private Instant createdAt;
+    private Instant createdDate;
 
     @LastModifiedDate
     @Column(nullable = false)
-    private Instant modifiedAt;
+    private Instant modifiedDate;
 }

@@ -12,8 +12,8 @@ public class TaskDto {
             Long id,
             String contents,
             boolean isDone,
-            Instant createdAt,
-            Instant modifiedAt
+            Instant createdDate,
+            Instant modifiedDate
     ) {}
 
     public record UpdateTaskRequest(

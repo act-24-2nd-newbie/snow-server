@@ -40,8 +40,8 @@ public class TaskController {
                 task.getId(),
                 task.getContents(),
                 task.getIsDone(),
-                task.getCreatedAt(),
-                task.getModifiedAt()
+                task.getCreatedDate(),
+                task.getModifiedDate()
         )).collect(Collectors.toList());
     }
 
