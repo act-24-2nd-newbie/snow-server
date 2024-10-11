@@ -6,8 +6,10 @@ public class MemberDto {
             String email
     ) {}
 
+
     public record CheckMemberResponse(
-            boolean exists,
+            Long id,
+            String email,
             String userName
     ) {}
 
