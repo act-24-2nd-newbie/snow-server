@@ -3,13 +3,13 @@ package com.sds.todo.controller;
 import com.sds.todo.dto.TaskDto;
 import com.sds.todo.model.Task;
 import com.sds.todo.service.TaskService;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -21,21 +21,39 @@ public class TaskController {
 
     private final TaskService taskService;
 
+//    public ResponseEntity<Void> createTaskV1(@RequestBody TaskDto.CreateTaskRequest request) {
+//        // Check input data
+//        if (request.contents() == null || request.contents().isBlank()) {
+//            return ResponseEntity.badRequest().build();
+//        }
+//
+//        taskService.createTask(request.contents());
+//
+//        return ResponseEntity.created(URI.create("")).build();
+//    }
+
     @PostMapping
     public ResponseEntity<Void> createTask(@RequestBody TaskDto.CreateTaskRequest request) {
         // Check input data
-        if (request.contents() == null || request.contents().isBlank()) {
+        if (request.memberId() == null ||
+                request.contents() == null ||
+                request.contents().isBlank()
+        ) {
             return ResponseEntity.badRequest().build();
         }
 
-        taskService.createTask(request.contents());
+        try {
+            taskService.createTask(request.memberId(), request.contents());
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.notFound().build();
+        }
 
-        return ResponseEntity.created(URI.create("")).build();
+        return ResponseEntity.status(HttpStatus.CREATED).build();
     }
 
-    @GetMapping
-    public List<TaskDto.FindTaskResponse> getTasks() {
-        List<Task> tasks = taskService.getTasks();
+    @GetMapping("/member/{memberId}")
+    public List<TaskDto.FindTaskResponse> getTasks(@PathVariable Long memberId) {
+        List<Task> tasks = taskService.getTasks(memberId);
         return tasks.stream().map((task) -> new TaskDto.FindTaskResponse(
                 task.getId(),
                 task.getContents(),

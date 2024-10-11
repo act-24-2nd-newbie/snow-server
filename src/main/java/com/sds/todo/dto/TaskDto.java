@@ -5,6 +5,7 @@ import java.time.Instant;
 public class TaskDto {
 
     public record CreateTaskRequest(
+            Long memberId,
             String contents
     ) {}
 

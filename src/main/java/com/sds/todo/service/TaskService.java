@@ -1,7 +1,9 @@
 package com.sds.todo.service;
 
 import com.sds.todo.model.Task;
+import com.sds.todo.repository.MemberRepository;
 import com.sds.todo.repository.TaskRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,14 +15,27 @@ import java.util.List;
 public class TaskService {
 
     private final TaskRepository taskRepository;
+    private final MemberRepository memberRepository;
 
     @Transactional
-    public void createTask(String contents) {
-        taskRepository.save(Task.builder().contents(contents).isDone(false).build());
+    public void createTask(Long memberId, String contents) {
+        var member = memberRepository.findById(memberId);
+        if (member.isEmpty()) {
+            throw new EntityNotFoundException();
+        }
+
+        taskRepository.save(Task.builder()
+                .member(member.get())
+                .contents(contents)
+                .isDone(false)
+                .build()
+        );
     }
 
-    public List<Task> getTasks() {
-        return taskRepository.findAll();
+    @Transactional(readOnly = true)
+    public List<Task> getTasks(Long memberId) {
+        var member = memberRepository.getReferenceById(memberId);
+        return taskRepository.findAllByMember(member);
     }
 
     @Transactional

@@ -1,5 +1,7 @@
 package com.sds.todo.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.sds.todo.model.Member;
 import com.sds.todo.model.Task;
 import com.sds.todo.service.TaskService;
 import org.junit.jupiter.api.Test;
@@ -12,11 +14,11 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Map;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @AutoConfigureMockMvc
 @WebMvcTest(controllers = TaskController.class)
@@ -30,17 +32,24 @@ public class TaskControllerTest {
 
     @Test
     public void testPost() throws Exception {
+        var input = Map.of("memberId", 1L, "contents", "test");
+
         mockMvc.perform(post("/api/v1/tasks")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content("{\"contents\":\"test\"}"))
+                .content(new ObjectMapper().writeValueAsString(input)))
                 .andExpect(status().isCreated());
+
+        verify(taskService, times(1))
+                .createTask(1L, "test");
     }
 
     @Test
     public void testGetList() throws Exception {
-        when(taskService.getTasks()).thenReturn(List.of(
+        Member m = new Member();
+        when(taskService.getTasks(1L)).thenReturn(List.of(
                 Task.builder()
                         .id(1L)
+                        .member(m)
                         .contents("contents")
                         .isDone(false)
                         .createdDate(Instant.now())
@@ -49,14 +58,13 @@ public class TaskControllerTest {
                 )
         );
 
-        mockMvc.perform(get("/api/v1/tasks")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"contents\":\"test\"}"))
+        mockMvc.perform(get("/api/v1/tasks/member/1"))
                 .andExpect(status().isOk())
-                .andExpect(content().json("[{\"id\": 1}]"));
+                .andExpect(jsonPath("$.length()").value(1))
+                .andExpect(jsonPath("$[0].id").value(1));
 
         verify(taskService, times(1))
-                .getTasks();
+                .getTasks(1L);
     }
 
     @Test
