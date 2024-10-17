@@ -1,5 +1,5 @@
-drop table members;
-drop table tasks;
+drop table if exists members;
+drop table if exists tasks;
 
 create table members (
     id bigserial primary key,
